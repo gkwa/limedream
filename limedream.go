@@ -9,15 +9,14 @@ import (
 
 func Main() int {
 	run(slog.LevelDebug)
+	run(slog.LevelInfo)
 	return 0
 }
 
 func run(level slog.Level) {
-	logLevel := &slog.LevelVar{} // INFO
-	logLevel.Set(level)
 	opts := slog.HandlerOptions{
 		AddSource:   true,
-		Level:       logLevel,
+		Level:       level,
 		ReplaceAttr: littlecow.Replace,
 	}
 	handler := slog.NewTextHandler(os.Stderr, &opts)
