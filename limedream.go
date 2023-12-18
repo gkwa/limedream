@@ -8,21 +8,27 @@ import (
 )
 
 func Main() int {
-	run(slog.LevelDebug)
-	run(slog.LevelInfo)
+	var opts *slog.HandlerOptions
+	var handler slog.Handler
+
+	opts = littlecow.OpinionatedHandlerOptions(slog.LevelDebug, littlecow.RemoveTimestampAndTruncateSource)
+	handler = slog.NewJSONHandler(os.Stderr, opts)
+	run(handler)
+
+	opts = littlecow.OpinionatedHandlerOptions(slog.LevelInfo, littlecow.TruncateSourcePath)
+	handler = slog.NewTextHandler(os.Stderr, opts)
+	run(handler)
+
+	opts = littlecow.OpinionatedHandlerOptions(slog.LevelDebug, littlecow.TruncateSourcePath)
+	handler = slog.NewTextHandler(os.Stderr, opts)
+	run(handler)
+
 	return 0
 }
 
-func run(level slog.Level) {
-	opts := slog.HandlerOptions{
-		AddSource:   true,
-		Level:       level,
-		ReplaceAttr: littlecow.Replace,
-	}
-	handler := slog.NewTextHandler(os.Stderr, &opts)
+func run(handler slog.Handler) {
 	logger := slog.New(handler)
-
 	slog.SetDefault(logger)
-	slog.Debug("my debug message", "test", "test")
-	slog.Error("my error message", "test", "test")
+	slog.Debug("debug", "debug", "debug")
+	slog.Error("error", "error", "error")
 }
